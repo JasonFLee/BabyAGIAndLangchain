@@ -10,7 +10,7 @@ import mimetypes
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from dotenv import load_dotenv
-
+import subprocess
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS as BaseFAISS
 from langchain.chat_models import ChatOpenAI
@@ -219,7 +219,7 @@ def answer_questions(faiss_index):
             break
 
         docs = faiss_index.similarity_search(query=question, k=2)
-        print(docs)
+        #print(docs)
 
         main_content = question + "\n\n"
         for doc in docs:
@@ -231,12 +231,15 @@ def answer_questions(faiss_index):
         messages.append(HumanMessage(content=question))
         messages.append(AIMessage(content=ai_response))
 
-        print(ai_response)
+        print("normal gpt response on document: " + ai_response)
+
+        subprocess.run(["python3", "babyagi/classic/BabyCatAGI.py", question])
+
 
 
 def main():
     faiss_obj_path = "models/ycla.pickle"
-    file_path = "data/ycla_en.pdf"
+    file_path = "data/rhino.pdf"
     index_name = "ycla"
 
     train = int(input("Do you want to train the model? (1 for yes, 0 for no): "))
